@@ -1,4 +1,10 @@
-import { defineTool, toolOutput, toolOutputPart } from "eve/tools";
+// DESIGN DEBT: this tool calls @google/generative-ai directly, outside Eve's
+// execution model. That means it doesn't appear in the agent's trace and
+// adds an extra API call per CV. The cleaner approach would be to pass the
+// PDF as a toolOutputPart.file() in toModelOutput so the agent's own model
+// (already Gemini multimodal) handles the visual analysis in one call.
+// Free tier impact: ~1 extra Gemini request per CV — negligible at dev scale.
+import { defineTool } from "eve/tools";
 import { z } from "zod";
 import {
   GoogleGenerativeAI,
