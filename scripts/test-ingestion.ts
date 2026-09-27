@@ -98,10 +98,9 @@ async function main() {
           abort.abort();
           break;
         case "session.waiting":
-          // No debería ocurrir en el turn 2, pero si ocurre lo reportamos
-          console.log("\n[session.waiting] El pipeline volvió a parkear (inesperado).");
-          clearTimeout(timer);
-          abort.abort();
+          // Eve entrega task notifications una por vez. El coordinator parkea
+          // entre notificaciones hasta tener todas. Seguimos esperando.
+          console.log("  [session.waiting] esperando más notificaciones...");
           break;
       }
     }
