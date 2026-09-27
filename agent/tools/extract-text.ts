@@ -1,6 +1,6 @@
 import { defineTool } from "eve/tools";
 import { z } from "zod";
-import { PDFParse } from "pdf-parse";
+import { extractText } from "unpdf";
 
 export default defineTool({
   description:
@@ -15,12 +15,8 @@ export default defineTool({
     pages: z.number(),
   }),
   async execute({ pdf_base64 }) {
-    const buffer = Buffer.from(pdf_base64, "base64");
-    const parser = new PDFParse({ data: buffer });
-    const result = await parser.getText();
-    return {
-      text: result.text,
-      pages: result.total,
-    };
+    const buffer = new Uint8Array(Buffer.from(pdf_base64, "base64"));
+    const { text, totalPages } = await extractText(buffer, { mergePages: true });
+    return { text, pages: totalPages };
   },
 });
