@@ -1,5 +1,5 @@
 /**
- * Script de prueba para el CV Ingestion Agent.
+ * Script de prueba para el pipeline completo (Fase 1 + 2).
  * Uso: npx tsx scripts/test-ingestion.ts <ruta-al-pdf> [url-del-agente]
  *
  * Ejemplos:
@@ -37,8 +37,8 @@ async function main() {
   const result = await response.result();
 
   console.log("\nStatus:", result.status);
-  console.log("\nRespuesta del agente:");
-  console.log(result.message);
+  console.log("\nResultado completo:");
+  console.log(JSON.stringify(result, null, 2));
 }
 
 main().catch((err) => {
