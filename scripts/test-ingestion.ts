@@ -99,8 +99,14 @@ async function main() {
           break;
         case "session.waiting":
           // Eve entrega task notifications una por vez. El coordinator parkea
-          // entre notificaciones hasta tener todas. Seguimos esperando.
-          console.log("  [session.waiting] esperando más notificaciones...");
+          // entre notificaciones hasta tener todas.
+          if (finalMessage) {
+            // Ya tenemos el output final — el siguiente waiting es el cierre.
+            clearTimeout(timer);
+            abort.abort();
+          } else {
+            console.log("  [session.waiting] esperando más notificaciones...");
+          }
           break;
       }
     }
