@@ -8,6 +8,6 @@ const google = createGoogleGenerativeAI({
 export default defineAgent({
   description:
     "Analyze the execution skills and craft mastery in a CV: depth of expertise in the person's own field, regardless of industry.",
-  model: google("gemini-2.5-flash"),
+  model: google("gemini-3.8-flash"),
   modelContextWindowTokens: 1_048_576,
 });

@@ -8,6 +8,6 @@ const google = createGoogleGenerativeAI({
 export default defineAgent({
   description:
     "Analyze the career trajectory of a CV: growth rate, progression pattern, ambition signals, and career momentum.",
-  model: google("gemini-2.5-flash"),
+  model: google("gemini-3.8-flash"),
   modelContextWindowTokens: 1_048_576,
 });

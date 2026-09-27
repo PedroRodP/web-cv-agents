@@ -8,6 +8,6 @@ const google = createGoogleGenerativeAI({
 export default defineAgent({
   description:
     "Analyze the leadership dimension of a CV: team management, influence, decision-making, and organizational impact.",
-  model: google("gemini-2.5-flash"),
+  model: google("gemini-3.8-flash"),
   modelContextWindowTokens: 1_048_576,
 });
