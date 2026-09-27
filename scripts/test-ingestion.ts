@@ -9,6 +9,8 @@
 import { readFile } from "node:fs/promises";
 import { Client } from "eve/client";
 
+const TIMEOUT_MS = 5 * 60 * 1000; // 5 minutos
+
 async function main() {
   const pdfPath = process.argv[2];
   const host = process.argv[3] ?? "http://localhost:3000";
@@ -34,11 +36,89 @@ async function main() {
 
   console.log("Session ID:", response.sessionId);
 
-  const result = await response.result();
+  // Turn 1: el coordinator valida el CV, extrae texto, calcula fingerprint y
+  // despacha los 6 analysts como background tasks. Termina con status "waiting".
+  const turn1 = await response.result();
+  console.log("\n[Turn 1] Status:", turn1.status);
+  if (turn1.message) console.log("[Turn 1] Mensaje:", turn1.message);
 
-  console.log("\nStatus:", result.status);
-  console.log("\nResultado completo:");
-  console.log(JSON.stringify(result, null, 2));
+  if (turn1.status === "completed") {
+    console.log("\nResultado final (turn 1):");
+    console.log(JSON.stringify(turn1, null, 2));
+    return;
+  }
+
+  if (turn1.status === "failed") {
+    console.error("\nFallo en turn 1:", JSON.stringify(turn1, null, 2));
+    process.exit(1);
+  }
+
+  // Status "waiting": los 6 analysts están corriendo en background.
+  // Eve disparará una notificación cuando todos completen, despertando
+  // al coordinator en un segundo turn automático (sin mensaje del usuario).
+  console.log("\nSubagentes corriendo en background. Esperando resultados...\n");
+
+  const abort = new AbortController();
+  const timer = setTimeout(() => {
+    console.error("\nTimeout: el pipeline tardó más de 5 minutos.");
+    abort.abort();
+  }, TIMEOUT_MS);
+
+  let finalMessage = "";
+
+  try {
+    // session.stream() continúa desde el cursor actual y sigue eventos live.
+    // Cuando los subagentes completen, Eve dispara las task notifications y el
+    // coordinator se despierta — esos eventos aparecen aquí.
+    for await (const event of session.stream({ signal: abort.signal })) {
+      switch (event.type) {
+        case "turn.started":
+          console.log(`[Turn ${event.data.sequence}] Iniciando...`);
+          break;
+        case "message.received":
+          if (event.data.kind === "execution.background_task") {
+            console.log("  [task notification] subagente completó");
+          }
+          break;
+        case "message.appended":
+          process.stdout.write(event.data.messageDelta);
+          break;
+        case "message.completed":
+          finalMessage = event.data.message ?? "";
+          console.log(); // newline tras el streaming del mensaje
+          break;
+        case "session.completed":
+          console.log("\n[Sesión completada]");
+          clearTimeout(timer);
+          abort.abort(); // cierra el stream
+          break;
+        case "session.failed":
+          console.error("\n[Sesión fallida]:", event.data.message);
+          clearTimeout(timer);
+          abort.abort();
+          break;
+        case "session.waiting":
+          // No debería ocurrir en el turn 2, pero si ocurre lo reportamos
+          console.log("\n[session.waiting] El pipeline volvió a parkear (inesperado).");
+          clearTimeout(timer);
+          abort.abort();
+          break;
+      }
+    }
+  } catch (err: unknown) {
+    if (!(err instanceof Error) || err.name !== "AbortError") throw err;
+  }
+
+  // Intentar parsear el mensaje final como JSON
+  if (finalMessage) {
+    console.log("\n--- Resultado Final ---");
+    try {
+      const parsed = JSON.parse(finalMessage);
+      console.log(JSON.stringify(parsed, null, 2));
+    } catch {
+      console.log(finalMessage);
+    }
+  }
 }
 
 main().catch((err) => {
