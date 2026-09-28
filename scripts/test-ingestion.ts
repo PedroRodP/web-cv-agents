@@ -1,10 +1,15 @@
 /**
- * Script de prueba para el pipeline completo (Fase 1 + 2).
+ * Script de prueba para el pipeline completo (Fase 1 + 2 + 3).
  * Uso: npx tsx scripts/test-ingestion.ts <ruta-al-pdf> [url-del-agente]
  *
  * Ejemplos:
  *   npx tsx scripts/test-ingestion.ts ~/mi-cv.pdf
  *   npx tsx scripts/test-ingestion.ts ~/mi-cv.pdf https://web-cv-agents.vercel.app
+ *
+ * Flujo de turns:
+ *   Turn 1: coordinator valida, extrae texto, despacha 6 analysts + fingerprint → parks
+ *   Turn 2: coordinator agrega analysts, computa contextual seed, despacha visual-translator → parks
+ *   Turn 3: coordinator recibe Visual DNA del visual-translator → retorna JSON final
  */
 import { readFile } from "node:fs/promises";
 import { Client } from "eve/client";
