@@ -1,13 +1,13 @@
 import { defineAgent } from "eve";
-import { createGroq } from "@ai-sdk/groq";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
-const groq = createGroq({
-  apiKey: process.env.GROQ_API_KEY,
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
 });
 
 export default defineAgent({
-  model: groq("llama-3.3-70b-versatile"),
-  // Requerido cuando se usa un provider directo: Eve no puede resolver
-  // el tamaño de ventana de contexto en build time desde el catálogo.
-  modelContextWindowTokens: 128_000,
+  // gemini-3.1-pro-preview: soporta PDF como file attachment (vision).
+  // Solo el coordinator usa Google — los 6 subagents usan Groq.
+  model: google("gemini-3.1-pro-preview"),
+  modelContextWindowTokens: 1_048_576,
 });
