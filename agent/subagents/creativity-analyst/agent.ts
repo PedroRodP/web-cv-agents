@@ -1,13 +1,13 @@
 import { defineAgent } from "eve";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGroq } from "@ai-sdk/groq";
 
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+const groq = createGroq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 export default defineAgent({
   description:
-    "Analyze the creativity dimension of a CV: innovation, novel approaches, creative problem-solving, and unconventional thinking.",
-  model: google("gemini-3.1-flash-lite"),
-  modelContextWindowTokens: 1_048_576,
+    "Analyze creativity and innovation signals in a CV: initiatives beyond role scope, novel solutions, entrepreneurial ventures, and original contributions, regardless of industry.",
+  model: groq("llama-3.3-70b-versatile"),
+  modelContextWindowTokens: 128_000,
 });

@@ -1,13 +1,13 @@
 import { defineAgent } from "eve";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGroq } from "@ai-sdk/groq";
 
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+const groq = createGroq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 export default defineAgent({
   description:
-    "Analyze the communication dimension of a CV: clarity of writing, articulation of impact, presentation skills, and public-facing work.",
-  model: google("gemini-3.1-flash-lite"),
-  modelContextWindowTokens: 1_048_576,
+    "Analyze communication signals in a CV: writing clarity, quantified achievements, public presence, teaching, and roles requiring frequent stakeholder communication.",
+  model: groq("llama-3.3-70b-versatile"),
+  modelContextWindowTokens: 128_000,
 });
