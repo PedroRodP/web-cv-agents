@@ -8,6 +8,6 @@ const google = createGoogleGenerativeAI({
 export default defineAgent({
   description:
     "Analyze the creativity dimension of a CV: innovation, novel approaches, creative problem-solving, and unconventional thinking.",
-  model: google("gemini-3.8-flash"),
+  model: google("gemini-3.5-flash-lite"),
   modelContextWindowTokens: 1_048_576,
 });

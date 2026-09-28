@@ -8,6 +8,6 @@ const google = createGoogleGenerativeAI({
 export default defineAgent({
   description:
     "Analyze the collaboration dimension of a CV: teamwork, cross-functional work, open-source contributions, and interpersonal impact.",
-  model: google("gemini-3.8-flash"),
+  model: google("gemini-3.5-flash-lite"),
   modelContextWindowTokens: 1_048_576,
 });
