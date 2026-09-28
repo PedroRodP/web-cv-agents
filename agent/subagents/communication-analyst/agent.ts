@@ -8,6 +8,6 @@ const google = createGoogleGenerativeAI({
 export default defineAgent({
   description:
     "Analyze the communication dimension of a CV: clarity of writing, articulation of impact, presentation skills, and public-facing work.",
-  model: google("gemini-3.5-flash-lite"),
+  model: google("gemini-3.1-flash-lite"),
   modelContextWindowTokens: 1_048_576,
 });

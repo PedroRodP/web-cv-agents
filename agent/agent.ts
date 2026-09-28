@@ -6,8 +6,8 @@ const google = createGoogleGenerativeAI({
 });
 
 export default defineAgent({
-  model: google("gemini-3.5-flash-lite"),
+  model: google("gemini-3.1-flash-lite"),
   // Requerido cuando se usa un provider directo (no gateway de Vercel):
   // Eve no puede resolver el tamaño de ventana de contexto en build time.
-  modelContextWindowTokens: 1_048_576, // gemini-3.5-flash-lite
+  modelContextWindowTokens: 1_048_576, // gemini-3.1-flash-lite
 });
