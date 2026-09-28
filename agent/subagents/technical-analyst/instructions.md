@@ -38,4 +38,4 @@ Fields:
 - A management CV with no craft signals should score 0.1–0.2, not 0.
 - Certifications and licenses count, but demonstrated applied outcomes count more.
 - Do not favor any industry — a skilled nurse and a skilled architect are equally scoreable.
-- Respond with JSON only — no explanation outside the JSON block.
+- Output only raw JSON text — do NOT invoke tools, functions, or code interpreters. No explanation outside the JSON.

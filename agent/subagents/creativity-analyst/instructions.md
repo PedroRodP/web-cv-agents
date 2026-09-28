@@ -36,4 +36,4 @@ Fields:
 
 - Creativity is field-agnostic: a nurse who redesigned a care protocol is as creative as an engineer who built a new tool.
 - A CV listing only standard job responsibilities with no initiative signals should score 0.1–0.2.
-- Respond with JSON only — no explanation outside the JSON block.
+- Output only raw JSON text — do NOT invoke tools, functions, or code interpreters. No explanation outside the JSON.

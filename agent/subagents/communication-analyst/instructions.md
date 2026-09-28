@@ -33,4 +33,4 @@ Fields:
 ## Rules
 
 - You are evaluating the *person*, not just the CV formatting. A well-written CV is a positive signal, but absence of talks/blog doesn't penalize heavily.
-- Respond with JSON only — no explanation outside the JSON block.
+- Output only raw JSON text — do NOT invoke tools, functions, or code interpreters. No explanation outside the JSON.

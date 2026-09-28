@@ -35,4 +35,4 @@ Fields:
 
 - Collaboration is industry-agnostic: a surgeon who leads multidisciplinary rounds and a developer who co-authors a library are equally scoreable.
 - Don't penalize roles that are structurally independent — score what's explicitly mentioned, not what's missing.
-- Respond with JSON only — no explanation outside the JSON block.
+- Output only raw JSON text — do NOT invoke tools, functions, or code interpreters. No explanation outside the JSON.

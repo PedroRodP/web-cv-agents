@@ -35,4 +35,4 @@ Fields:
 - A senior individual contributor with no reports should score 0.1–0.3.
 - Tech leads who influence without direct reports score in the 0.3–0.5 range.
 - Formal people management pushes the score above 0.5.
-- Respond with JSON only — no explanation outside the JSON block.
+- Output only raw JSON text — do NOT invoke tools, functions, or code interpreters. No explanation outside the JSON.

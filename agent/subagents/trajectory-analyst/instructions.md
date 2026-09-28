@@ -36,4 +36,4 @@ Fields:
 - A short CV (early career) is not a penalty — assess trajectory relative to career stage.
 - Career gaps do not lower the score unless they indicate stagnation with no learning or explanation.
 - Frequent lateral moves (same level, different company) are neutral — context matters.
-- Respond with JSON only — no explanation outside the JSON block.
+- Output only raw JSON text — do NOT invoke tools, functions, or code interpreters. No explanation outside the JSON.
