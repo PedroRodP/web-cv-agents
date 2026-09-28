@@ -51,46 +51,53 @@ The six subagents are:
 
 ## Phase 3 — Visual Translation
 
-Once the fingerprint and all 6 analysts have responded, run **both of the following concurrently**:
+**IMPORTANT: Do NOT produce the Visual DNA JSON yourself. Only the `visual-translator` subagent produces Visual DNA. Your role here is to call one tool and dispatch one subagent — nothing more.**
 
-### 3a. Compute contextual seed (call the `contextual-seed` tool)
+Once the fingerprint and all 6 analysts have responded:
 
-Call `contextual-seed` with no arguments. It returns the current UTC hour, day of week, and lunar phase.
+### Step 1 — Call the `contextual-seed` tool
 
-### 3b. (already done) collect all analyst results
+Call `contextual-seed` with no arguments. This is a required tool call. Do not skip it.
 
-You have all 6 analyst results from Phase 2. Assemble them together with the fingerprint, visual analysis, and the contextual seed from step 3a.
+### Step 2 — Dispatch `visual-translator`
 
-Once the contextual seed is ready, dispatch the `visual-translator` subagent. Send it a single JSON message with this structure:
+Once `contextual-seed` returns, immediately dispatch the `visual-translator` subagent. Send it one message containing a JSON object with this exact structure (fill in the actual values):
 
 ```
 {
   "fingerprint": "<16-char hex from Phase 2>",
-  "seed": { "hour_utc": ..., "day_of_week": ..., "moon_phase": ... },
-  "visual_analysis": { ... },
+  "seed": { "hour_utc": <integer>, "day_of_week": <integer>, "moon_phase": <float> },
+  "visual_analysis": {
+    "layout_style": "<value>",
+    "density": "<value>",
+    "has_photo": <boolean>,
+    "color_usage": "<value>",
+    "visual_notes": "<value>"
+  },
   "analysis": {
-    "technical":     { "score": ..., "descriptors": [...], "summary": "..." },
-    "leadership":    { "score": ..., "descriptors": [...], "summary": "..." },
-    "creativity":    { "score": ..., "descriptors": [...], "summary": "..." },
-    "trajectory":    { "score": ..., "descriptors": [...], "summary": "..." },
-    "communication": { "score": ..., "descriptors": [...], "summary": "..." },
-    "collaboration": { "score": ..., "descriptors": [...], "summary": "..." }
+    "technical":     { "score": <float>, "descriptors": [...], "summary": "<text>" },
+    "leadership":    { "score": <float>, "descriptors": [...], "summary": "<text>" },
+    "creativity":    { "score": <float>, "descriptors": [...], "summary": "<text>" },
+    "trajectory":    { "score": <float>, "descriptors": [...], "summary": "<text>" },
+    "communication": { "score": <float>, "descriptors": [...], "summary": "<text>" },
+    "collaboration": { "score": <float>, "descriptors": [...], "summary": "<text>" }
   }
 }
 ```
 
-The `visual-translator` runs as a background task. Park and wait for it.
+After dispatching `visual-translator`, stop. Do not produce any output. Park and wait for it to complete.
 
 ---
 
 ## Final output
 
-When the `visual-translator` responds, return its output directly as the final message. Do not wrap it or add extra fields. The Visual DNA JSON from the translator is the final pipeline output.
+When the `visual-translator` responds, copy its exact output as your final message. Do not modify, wrap, or add fields. The Visual DNA JSON produced by the `visual-translator` is the pipeline's final output.
 
 ## Rules
 
 - Never hallucinate CV content.
 - The `extract-text` tool requires the PDF as base64. The PDF arrives as a file attachment — pass its base64 data directly.
 - Do NOT use bash or shell commands to explore the filesystem.
+- **Do NOT produce Visual DNA JSON yourself.** The Visual DNA is produced exclusively by the `visual-translator` subagent.
 - If an analyst subagent returns malformed output, use `{ "score": 0, "descriptors": [], "summary": "parse error" }` for that dimension.
 - If the `visual-translator` returns malformed output, return its raw text wrapped in `{ "error": "visual-translator parse failure", "raw": "..." }`.
