@@ -32,6 +32,10 @@ async function main() {
       { type: "text", text: "Procesá este CV." },
       { type: "file", data: dataUrl, mediaType: "application/pdf", filename: "cv.pdf" },
     ],
+    // "cohort": Eve espera a que TODOS los subagentes terminen y despierta al
+    // coordinator una sola vez con todos los resultados. Sin esto, el coordinator
+    // se despierta 6 veces (una por notificación) y supera el límite de 20 RPM.
+    taskDeliveryPolicy: "cohort",
   });
 
   console.log("Session ID:", response.sessionId);
