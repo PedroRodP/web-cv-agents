@@ -9,7 +9,7 @@
 import { readFile } from "node:fs/promises";
 import { Client } from "eve/client";
 
-const TIMEOUT_MS = 5 * 60 * 1000; // 5 minutos
+const TIMEOUT_MS = 15 * 60 * 1000; // 15 minutos
 
 async function main() {
   const pdfPath = process.argv[2];
