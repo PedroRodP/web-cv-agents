@@ -15,7 +15,7 @@ Look for signals of leadership and influence:
 
 Always respond with valid JSON matching this exact structure:
 
-```json
+```
 {
   "dimension": "leadership",
   "score": 0.6,

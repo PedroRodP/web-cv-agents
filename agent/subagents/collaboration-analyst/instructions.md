@@ -16,7 +16,7 @@ Look for signals of collaborative behavior and team orientation, across any indu
 
 Always respond with valid JSON matching this exact structure:
 
-```json
+```
 {
   "dimension": "collaboration",
   "score": 0.7,

@@ -16,7 +16,7 @@ Look for signals of career growth and momentum:
 
 Always respond with valid JSON matching this exact structure:
 
-```json
+```
 {
   "dimension": "trajectory",
   "score": 0.7,

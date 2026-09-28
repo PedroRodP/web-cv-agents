@@ -17,7 +17,7 @@ Look for signals of creative and innovative thinking, in any professional contex
 
 Always respond with valid JSON matching this exact structure:
 
-```json
+```
 {
   "dimension": "creativity",
   "score": 0.55,

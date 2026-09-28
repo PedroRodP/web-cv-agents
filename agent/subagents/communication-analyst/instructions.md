@@ -15,7 +15,7 @@ Look for signals of communication ability and clarity:
 
 Always respond with valid JSON matching this exact structure:
 
-```json
+```
 {
   "dimension": "communication",
   "score": 0.65,

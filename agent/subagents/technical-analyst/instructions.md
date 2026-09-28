@@ -17,7 +17,7 @@ Look for signals that the person is highly skilled at executing the work of thei
 
 Always respond with valid JSON matching this exact structure:
 
-```json
+```
 {
   "dimension": "technical",
   "score": 0.75,
