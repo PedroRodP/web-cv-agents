@@ -8,6 +8,6 @@ const google = createGoogleGenerativeAI({
 export default defineAgent({
   // gemini-3.1-pro-preview: soporta PDF como file attachment (vision).
   // Solo el coordinator usa Google — los 6 subagents usan Groq.
-  model: google("gemini-3.1-pro-preview"),
+  model: google("gemini-3.5-flash-lite"),
   modelContextWindowTokens: 1_048_576,
 });
