@@ -6,8 +6,7 @@ const groq = createGroq({
 });
 
 export default defineAgent({
-  description:
-    "Analyze creativity and innovation signals in a CV: initiatives beyond role scope, novel solutions, entrepreneurial ventures, and original contributions, regardless of industry.",
-  model: groq("llama-3.3-70b-versatile"),
+  description: "Analyze creativity and innovation signals in a CV: initiatives beyond role scope, novel solutions, entrepreneurial ventures, and original contributions, regardless of industry.",
+  model: groq("openai/gpt-oss-120b"),
   modelContextWindowTokens: 128_000,
 });

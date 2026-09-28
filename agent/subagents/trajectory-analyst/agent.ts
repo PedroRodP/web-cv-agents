@@ -6,8 +6,7 @@ const groq = createGroq({
 });
 
 export default defineAgent({
-  description:
-    "Analyze career trajectory in a CV: progression in title and scope, pace of advancement, pivots, and momentum relative to career stage.",
-  model: groq("llama-3.3-70b-versatile"),
+  description: "Analyze career trajectory in a CV: progression in title and scope, pace of advancement, pivots, and momentum relative to career stage.",
+  model: groq("openai/gpt-oss-120b"),
   modelContextWindowTokens: 128_000,
 });

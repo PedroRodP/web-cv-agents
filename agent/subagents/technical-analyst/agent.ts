@@ -6,8 +6,7 @@ const groq = createGroq({
 });
 
 export default defineAgent({
-  description:
-    "Analyze the execution skills and craft mastery in a CV: depth of expertise in the person's own field, regardless of industry.",
-  model: groq("llama-3.3-70b-versatile"),
+  description: "Analyze the execution skills and craft mastery in a CV: depth of expertise in the person's own field, regardless of industry.",
+  model: groq("openai/gpt-oss-120b"),
   modelContextWindowTokens: 128_000,
 });

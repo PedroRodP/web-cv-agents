@@ -6,8 +6,7 @@ const groq = createGroq({
 });
 
 export default defineAgent({
-  description:
-    "Analyze leadership signals in a CV: team management, decision-making authority, organizational influence, and people development.",
-  model: groq("llama-3.3-70b-versatile"),
+  description: "Analyze leadership signals in a CV: team management, decision-making authority, organizational influence, and people development.",
+  model: groq("openai/gpt-oss-120b"),
   modelContextWindowTokens: 128_000,
 });

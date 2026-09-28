@@ -6,8 +6,7 @@ const groq = createGroq({
 });
 
 export default defineAgent({
-  description:
-    "Analyze collaboration signals in a CV: cross-team work, community involvement, mentoring, joint projects, and collective language — across any industry.",
-  model: groq("llama-3.3-70b-versatile"),
+  description: "Analyze collaboration signals in a CV: cross-team work, community involvement, mentoring, joint projects, and collective language — across any industry.",
+  model: groq("openai/gpt-oss-120b"),
   modelContextWindowTokens: 128_000,
 });
