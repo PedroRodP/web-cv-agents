@@ -1,26 +1,87 @@
 @import "tailwindcss";
 
+/* ── Paleta Herbario / Espécimen Científico ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:               #F2EAD8;
+  --surface:          #FBF6EE;
+  --border:           #B89E7A;
+  --text-primary:     #2C2018;
+  --text-secondary:   #7B6347;
+  --accent:           #B84E2A;
+  --accent-secondary: #D4953D;
+  --glow:             #E8C97E;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bg:               var(--bg);
+  --color-surface:          var(--surface);
+  --color-border:           var(--border);
+  --color-text-primary:     var(--text-primary);
+  --color-text-secondary:   var(--text-secondary);
+  --color-accent:           var(--accent);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-glow:             var(--glow);
+  --font-display: var(--font-display);
+  --font-mono:    var(--font-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-mono), "Courier New", monospace;
+}
+
+/* ── Animaciones ── */
+
+/* Trazado SVG del octágono — como un lápiz que recorre y desrecorre el borde */
+@keyframes trace-border {
+  0%   { stroke-dashoffset: 1640; }
+  50%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -1640; }
+}
+
+/* Anillos de brújula para etapa de validación */
+@keyframes rotate-cw {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes rotate-ccw {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+/* Mancha de tinta expandiéndose — cada celda de analyst */
+@keyframes ink-expand {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Aparición estampada del resultado final */
+@keyframes stamp-in {
+  from { transform: scale(1.04); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* Línea horizontal que aparece debajo del JSON */
+@keyframes sweep-rule {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+/* Dibujo de la rama botánica (stroke-dashoffset → 0) */
+@keyframes draw-branch {
+  from { stroke-dashoffset: 600; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* Nodos que aparecen al final de las ramas */
+@keyframes node-appear {
+  from { opacity: 0; r: 0; }
+  to   { opacity: 1; r: 4; }
+}
+
+/* Pulso sutil del glow en zona de drop */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.10; transform: scale(0.96); }
+  50%       { opacity: 0.25; transform: scale(1.04); }
 }
