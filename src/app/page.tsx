@@ -402,7 +402,7 @@ function TranslatingPanel() {
 // La máscara 3D aparece con efecto de sello (stamp-in), seguida de una línea
 // horizontal que barre de izquierda a derecha. El JSON queda plegado debajo.
 
-function DonePanel({ result }: { result: VisualDna }) {
+function DonePanel({ result, onReset }: { result: VisualDna; onReset: () => void }) {
   return (
     <div
       className="w-full max-w-lg mx-auto flex flex-col gap-3"
@@ -416,6 +416,23 @@ function DonePanel({ result }: { result: VisualDna }) {
       <p style={{ fontSize: 10, color: "var(--text-secondary)", letterSpacing: "0.1em" }}>
         VISUAL DNA — MORPHOGENESIS MASK · {result.fingerprint.toUpperCase()}
       </p>
+      {/* Vuelve a idle: se desmonta el Canvas (R3F libera el contexto WebGL)
+          y reaparece la zona de upload, sin recargar la página */}
+      <button
+        onClick={onReset}
+        className="self-center"
+        style={{
+          fontSize: 10,
+          letterSpacing: "0.15em",
+          color: "var(--accent)",
+          background: "none",
+          border: "1px solid var(--border)",
+          padding: "6px 20px",
+          cursor: "pointer",
+        }}
+      >
+        NEW CV
+      </button>
       <details>
         <summary style={{ fontSize: 10, color: "var(--text-secondary)", letterSpacing: "0.1em", cursor: "pointer" }}>
           RAW JSON
@@ -594,7 +611,7 @@ export default function Home() {
         )}
 
         {state.stage === "done" && state.result && (
-          <DonePanel result={state.result} />
+          <DonePanel result={state.result} onReset={reset} />
         )}
 
         {state.stage === "rejected" && (
