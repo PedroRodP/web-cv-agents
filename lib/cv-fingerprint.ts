@@ -1,17 +1,26 @@
 import { createHash } from "node:crypto";
 
 export interface FingerprintInput {
-  name: string;
-  title: string;
-  first_skill: string;
+  full_name: string;
+  latest_title: string;
   years_experience: number;
+}
+
+// Normaliza lo que el LLM pudo transcribir con pequeñas variaciones:
+// mayúsculas, tildes ("Sofía" = "Sofia") y espacios repetidos.
+function normalize(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function computeFingerprint(input: FingerprintInput): string {
   const payload = [
-    input.name.trim().toLowerCase(),
-    input.title.trim().toLowerCase(),
-    input.first_skill.trim().toLowerCase(),
+    normalize(input.full_name),
+    normalize(input.latest_title),
     String(Math.round(input.years_experience)),
   ].join("|");
 
