@@ -32,7 +32,7 @@ El objetivo primario es **aprender orquestación multi-agente con Eve SDK** a ba
 
 ## Pipeline de agentes
 
-La cadena la orquesta **código** (`src/app/api/process-cv/route.ts`), no un LLM. Cada agente es un miembro independiente del workspace de Eve con su propia API en `/eve/<nombre>/v1`, y devuelve su resultado con `outputSchema`.
+La cadena la orquesta **código** (`src/app/api/process-cv/route.ts`), no un LLM. Hay 3 agentes, cada uno miembro independiente del workspace de Eve con su propia API en `/eve/<nombre>/v1`, y cada uno devuelve su resultado con `outputSchema`.
 
 ```
 PDF → unpdf (código) ─ texto
@@ -41,10 +41,11 @@ PDF → unpdf (código) ─ texto
        ↓                (rechazo → fin)
   fingerprint          código: SHA-256 de full_name + latest_title + años
        ↓
-  ┌──── 6 analysts en paralelo (Promise.all) ────┐
+  ┌──── analyst ×6 sesiones en paralelo (Promise.all) ────┐
+   mismo agente, un modo por sesión (header x-analyst-dimension):
    technical · leadership · creativity
    trajectory · communication · collaboration
-  └──────────────── score + descriptores ────────┘
+  └──────────────────── score + descriptores ─────────────┘
        ↓
   visual-dna           tools: contextual-seed + compute-parameters
        ↓                el LLM solo decide polos y colores
@@ -58,7 +59,11 @@ PDF → unpdf (código) ─ texto
 ```
 agents/
 ├── cv-ingestion/agent/         instructions.md · agent.ts · channels/eve.ts
-├── <dimensión>-analyst/agent/  ×6
+├── analyst/agent/              agente multi-modo
+│   ├── instructions/base.md        rol genérico + formato de salida
+│   ├── instructions/criteria.ts    dynamic instructions: elige el criterio según la dimensión
+│   ├── lib/criteria/<dim>.ts       criterios de cada dimensión (Markdown en un string)
+│   └── channels/eve.ts             AuthFn: header x-analyst-dimension → auth attributes
 └── visual-dna/agent/           + tools/contextual-seed.ts · tools/compute-parameters.ts
 lib/
 ├── pipeline-schemas.ts         IngestionSchema · AnalystSchema (outputSchema de cada eslabón)
@@ -76,6 +81,8 @@ src/app/render-lab/             página para iterar el renderer sin correr el pi
 - **Workspace de Eve** — los subagentes declarados solo los puede invocar un agente padre; para que el código llame a cada agente, cada uno es un miembro del workspace
 - **`outputSchema` en cada eslabón** — Eve obliga al modelo a cumplir el schema; `route.ts` revalida con Zod porque el cliente no lo hace
 - **`defaultTools: false` en todos los agentes** — sin `bash`/`read_file`; cada agente solo ve sus tools
+- **Un agente `analyst` multi-modo, no 6 agentes** — cada miembro del workspace genera 2 Serverless Functions en Vercel (`__server` HTTP + `flow` de Vercel Workflow) y el plan Hobby permite 12 por deployment. Las funciones salen de las carpetas de `agents/`, no de las sesiones: 6 sesiones del mismo agente usan las mismas 2 funciones (ver `docs/learnings/02`)
+- **Modo del analyst por dynamic instructions** — el resolver corre antes de que el mensaje entre al historial y no ve el `clientContext`; la dimensión viaja como header → `AuthFn` → `ctx.session.auth.current.attributes`. No es seguridad, es un modo de operación
 - **Solo PDF** — sin DOCX, MVP primero
 - **Validación de contenido en `cv-ingestion`** — rechaza documentos que no son CVs; acepta CVs pobres o mal formateados
 - **Validación de extensión en el browser** — `accept=".pdf"` + check de `file.type`
@@ -121,6 +128,7 @@ The Architect · The Catalyst · The Pioneer · The Connector · The Builder
 ## Notas de implementación
 
 - Los analysts son tareas de clasificación focalizada — `AnalystSchema`: score 0–1 + 2–3 descriptores + summary
+- Los criterios de cada dimensión se editan en `agents/analyst/agent/lib/criteria/<dim>.ts`: Eve no acepta `.md` dentro de `lib/` (solo módulos de código), por eso son Markdown dentro de un template string (escapar los backticks)
 - `cv-ingestion` recibe el PDF como file attachment y hace el análisis visual con Gemini (enums: `layout_style`, `density`, `color_usage`)
 - Un subagente de Eve no puede recibir archivos (su input es `message: string`); por eso el análisis visual vive en el primer eslabón
 - Logs del pipeline: prefijo `[pipeline]` en la consola de `next dev`, con tiempo y `session=wrun_...` por eslabón

@@ -21,7 +21,7 @@ export const maxDuration = 300;
 //   PDF → unpdf (código)
 //       → cv-ingestion            valida · identidad · análisis visual
 //       → fingerprint (código)
-//       → 6 analysts en paralelo  un score + descriptores por dimensión
+//       → analyst ×6 en paralelo  mismo agente, un modo por dimensión
 //       → visual-dna              seed + parámetros + polos + colores
 //       → verificación (código)   → renderer
 //
@@ -47,31 +47,38 @@ async function runAgent<S extends z.ZodType>(
   message: string | UserContent,
   schema: S,
   signal: AbortSignal,
+  options: { label?: string; headers?: Record<string, string> } = {},
 ): Promise<z.infer<S>> {
   const startedAt = Date.now();
   const client = new Client({ host: `${origin}/eve/${agent}` });
+  const label = options.label ?? agent;
 
-  const { response } = await client.sessions.create({ message, outputSchema: schema, signal });
+  const { response } = await client.sessions.create({
+    message,
+    outputSchema: schema,
+    signal,
+    headers: options.headers,
+  });
   const result = await response.result();
   const seconds = ((Date.now() - startedAt) / 1000).toFixed(1);
 
   if (result.status === "failed") {
-    console.error(`[pipeline] ${agent} FAILED (${seconds}s) session=${result.sessionId}`);
-    throw new AgentError(agent, "la sesión falló");
+    console.error(`[pipeline] ${label} FAILED (${seconds}s) session=${result.sessionId}`);
+    throw new AgentError(label, "la sesión falló");
   }
 
   const parsed = schema.safeParse(result.data);
   if (!parsed.success) {
-    console.error(`[pipeline] ${agent} schema inválido (${seconds}s) session=${result.sessionId}`);
+    console.error(`[pipeline] ${label} schema inválido (${seconds}s) session=${result.sessionId}`);
     console.error("[pipeline] data:", JSON.stringify(result.data));
     console.error("[pipeline] message:", result.message?.slice(0, 1000));
     throw new AgentError(
-      agent,
+      label,
       parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join(" | "),
     );
   }
 
-  console.log(`[pipeline] ${agent} ok (${seconds}s) session=${result.sessionId}`);
+  console.log(`[pipeline] ${label} ok (${seconds}s) session=${result.sessionId}`);
   return parsed.data;
 }
 
@@ -172,13 +179,12 @@ export async function POST(request: NextRequest) {
         let completed = 0;
         const results = await Promise.all(
           ANALYST_DIMENSIONS.map(async (dimension) => {
-            const result = await runAgent(
-              origin,
-              `${dimension}-analyst`,
-              cvText,
-              AnalystSchema,
-              abort.signal,
-            );
+            // Las 6 sesiones son del mismo agente: el header elige su modo
+            // (qué criterios usa) vía dynamic instructions
+            const result = await runAgent(origin, "analyst", cvText, AnalystSchema, abort.signal, {
+              label: `analyst:${dimension}`,
+              headers: { "x-analyst-dimension": dimension },
+            });
             completed += 1;
             send({ type: "analysts.progress", percent: Math.round((completed / 6) * 100) });
             return [dimension, result] as const;

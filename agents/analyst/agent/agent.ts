@@ -6,7 +6,6 @@ const google = createGoogleGenerativeAI({
 });
 
 export default defineAgent({
-  description: "Analyze career trajectory in a CV: progression in title and scope, pace of advancement, pivots, and momentum relative to career stage.",
   model: google("gemini-3.5-flash-lite"),
   modelContextWindowTokens: 1_048_576,
   // Sin bash/read_file/etc.: el agente solo ve los tools de su carpeta tools/
